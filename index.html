@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Rekapitulasi Pelaporan WBP - Kanwil Kemenkumham Kalsel</title>
+  <link rel="icon" type="image/webp" href="assets/Logo Permasyarakatan.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       CONTAINER STICKY TERPADU (HEADER + CONTROL STRIP + SLIDE TABS)
+       ========================================================================= -->
+  <div class="sticky-top-nav no-print">
+    
+    <!-- 1. Header Resmi Portal (Deep Navy) -->
+    <header class="app-header">
+      <div class="brand-wrapper">
+        <img src="assets/Logo Permasyarakatan.webp" alt="Logo Pemasyarakatan" class="app-logo">
+        <div class="brand-text">
+          <h1>SISTEM REKAPITULASI &amp; PELAPORAN WBP</h1>
+          <p>KANTOR WILAYAH DIREKTORAT JENDERAL PEMASYARAKATAN KALIMANTAN SELATAN</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btnOpenSsModal" class="btn btn-outline-light" title="Buka Database Spreadsheet">
+          Database Spreadsheet
+        </button>
+        <button id="btnRefresh" class="btn btn-outline-light" title="Sinkronkan data dari Google Spreadsheet">
+          Sinkronkan Data
+        </button>
+        <button id="btnSavePdf" class="btn btn-primary" title="Buka dialog Simpan sebagai PDF">
+          Simpan sebagai PDF (8 Halaman)
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. Control Strip / Bilah Pengaturan (Clean Light Bar - 1 Baris Rapi) -->
+    <div class="control-strip">
+      <div class="control-left">
+        <!-- Status Koneksi Ringkas -->
+        <div id="statusBadge" class="status-dot-pill" title="Status koneksi data">
+          <span class="dot"></span> Terhubung
+        </div>
+
+        <!-- Pilihan Database Spreadsheet Terdaftar -->
+        <div class="filter-group">
+          <span class="filter-label">Dokumen:</span>
+          <select id="selectDbSpreadsheet" class="form-select-clean" title="Pilih Spreadsheet yang digunakan">
+            <!-- Rendered via app.js -->
+          </select>
+        </div>
+
+        <!-- Pilihan Tab Sheet -->
+        <div class="filter-group">
+          <span class="filter-label">Sheet Tab:</span>
+          <select id="selectSheet" class="form-select-clean" title="Pilih sheet tanggal tertentu">
+            <option value="">(Otomatis: Sheet Terbaru)</option>
+          </select>
+        </div>
+
+        <!-- Status Salinan Cache -->
+        <span id="syncCacheBadge" class="cache-pill" title="Status penyimpanan cache database lokal">
+          Tersinkron
+        </span>
+      </div>
+
+      <div class="control-right">
+        <!-- Pengaturan Tanggal Cover Ringkas -->
+        <div class="date-toolbar">
+          <label class="chk-auto-label" title="Centang untuk menyamakan tanggal cover dengan tanggal sheet">
+            <input type="checkbox" id="chkAutoDate" checked>
+            <span>Auto</span>
+          </label>
+          <input type="text" id="inputReportDate" value="" placeholder="JUM’AT, 30 OKTOBER 2026" title="Tanggal pada Cover">
+          <button id="btnSetToday" class="btn-mini-today" title="Atur ke tanggal hari ini">
+            Hari Ini
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Tab Navigasi Slide (Clean Governmental Flat Tabs) -->
+    <nav class="slide-nav-bar">
+      <button class="nav-tab-item active" data-slide="slide-1">1. Cover Laporan</button>
+      <button class="nav-tab-item" data-slide="slide-2">2. Napi &amp; Tahanan</button>
+      <button class="nav-tab-item" data-slide="slide-3">3. Hak Integrasi</button>
+      <button class="nav-tab-item" data-slide="slide-4">4. Kasus Pidsus</button>
+      <button class="nav-tab-item" data-slide="slide-5">5. Kasus Pidum</button>
+      <button class="nav-tab-item" data-slide="slide-6">6. Agama Penghuni</button>
+      <button class="nav-tab-item" data-slide="slide-7">7. Kepemilikan Identitas</button>
+      <button class="nav-tab-item" data-slide="slide-8">8. Penutup</button>
+    </nav>
+  </div>
+
+  <!-- =========================================================================
+       MAIN PRESENTATION VIEWPORT (1440px x 810px per Slide 16:9 Landscape)
+       ========================================================================= -->
+  <main class="main-viewport">
+    <div id="slidesWrapper" class="slides-wrapper">
+
+      <!-- ================= SLIDE 1: COVER ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 1 dari 8 — Halaman Judul / Cover Laporan</div>
+        <section id="slide-1" class="slide-page slide-cover">
+          <!-- Dynamic Date Overlay -->
+          <div id="coverDateDisplay" class="cover-date-text">
+            JUM’AT, 30 OKTOBER 2026
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= SLIDE 2: REKAPITULASI JUMLAH NARAPIDANA DAN TAHANAN ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 2 dari 8 — Rekapitulasi Jumlah Narapidana dan Tahanan</div>
+        <section id="slide-2" class="slide-page slide-table-page">
+          <div class="slide-title-bar">
+            <h2>REKAPITULASI JUMLAH NARAPIDANA DAN TAHANAN</h2>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width: 28px;">NO</th>
+                  <th rowspan="2" style="width: 250px;">UPT</th>
+                  <th colspan="2">JUMLAH</th>
+                  <th rowspan="2" style="width: 58px;">TOTAL ISI</th>
+                  <th rowspan="2" style="width: 62px;">KAPASITAS</th>
+                  <th rowspan="2" style="width: 72px;">OVER KAPASITAS</th>
+                  <th rowspan="2" style="width: 40px;">WNA</th>
+                  <th rowspan="2" style="width: 42px;">ANAK</th>
+                  <th rowspan="2" style="width: 48px;">WANITA</th>
+                  <th rowspan="2" style="width: 48px;">LANSIA</th>
+                  <th rowspan="2" style="width: 55px;">RESIDIVIS</th>
+                  <th rowspan="2" style="width: 78px;">TAMBAHAN TAHANAN/NAPI BARU</th>
+                  <th rowspan="2" style="width: 82px;">MUTASI WBP ANTAR UPT DALAM PROVINSI KALSEL</th>
+                </tr>
+                <tr>
+                  <th style="width: 50px;">NAPI</th>
+                  <th style="width: 55px;">TAHANAN</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-table1">
+                <!-- Rendered via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= SLIDE 3: REKAPITULASI HAK INTEGRASI ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 3 dari 8 — Rekapitulasi Hak Integrasi (PB, CB, CMB, CMK, Asimilasi)</div>
+        <section id="slide-3" class="slide-page slide-table-page">
+          <div class="slide-title-bar">
+            <h2>REKAPITULASI HAK INTEGRASI</h2>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width: 32px;">NO</th>
+                  <th rowspan="2" style="width: 280px;">UPT</th>
+                  <th rowspan="2" style="width: 90px;">BEBAS MURNI</th>
+                  <th colspan="5">INTEGRASI</th>
+                  <th rowspan="2" style="width: 100px;">JUMLAH BEBAS</th>
+                </tr>
+                <tr>
+                  <th>PB</th>
+                  <th>CB</th>
+                  <th>CMB</th>
+                  <th>CMK</th>
+                  <th>ASIMILASI</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-table2">
+                <!-- Rendered via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= SLIDE 4: REKAPITULASI JUMLAH PIDSUS ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 4 dari 8 — Rekapitulasi Jumlah Tindak Pidana Khusus (Pidsus)</div>
+        <section id="slide-4" class="slide-page slide-table-page">
+          <div class="slide-title-bar">
+            <h2>REKAPITULASI JUMLAH PIDSUS</h2>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width: 32px;">NO</th>
+                  <th rowspan="2" style="width: 280px;">UPT</th>
+                  <th colspan="6">PIDSUS</th>
+                  <th rowspan="2" style="width: 110px;">JUMLAH PIDSUS</th>
+                </tr>
+                <tr>
+                  <th>NARKOBA</th>
+                  <th>TERORISME</th>
+                  <th>TIPIKOR</th>
+                  <th>MONEY LAUNDRY</th>
+                  <th>HUMAN TRAFIKING</th>
+                  <th>ILLEGAL LOOGING</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-table3">
+                <!-- Rendered via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= SLIDE 5: REKAPITULASI JUMLAH PIDUM DAN JENIS PIDANA ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 5 dari 8 — Rekapitulasi Jumlah Tindak Pidana Umum &amp; Vonis Khusus</div>
+        <section id="slide-5" class="slide-page slide-table-page">
+          <div class="slide-title-bar">
+            <h2>REKAPITULASI JUMLAH PIDUM DAN JENIS PIDANA</h2>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width: 30px;">NO</th>
+                  <th rowspan="2" style="width: 260px;">UPT</th>
+                  <th colspan="5">PIDUM</th>
+                  <th rowspan="2" style="width: 85px;">JUMLAH PIDUM</th>
+                  <th rowspan="2" style="width: 95px;">JUMLAH PIDSUS DAN PIDUM</th>
+                  <th rowspan="2" style="width: 90px;">PIDANA SEUMUR HIDUP</th>
+                  <th rowspan="2" style="width: 85px;">PIDANA MATI</th>
+                </tr>
+                <tr>
+                  <th>PEMBUNUHAN</th>
+                  <th>PENCURIAN</th>
+                  <th>PENGGELAPAN</th>
+                  <th>UU PERLINAK</th>
+                  <th>LAIN-LAIN</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-table4">
+                <!-- Rendered via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= SLIDE 6: REKAPITULASI JUMLAH PENGHUNI BERDASARKAN AGAMA ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 6 dari 8 — Rekapitulasi Jumlah Penghuni Berdasarkan Agama</div>
+        <section id="slide-6" class="slide-page slide-table-page">
+          <div class="slide-title-bar">
+            <h2>REKAPITULASI JUMLAH PENGHUNI BERDASARKAN AGAMA</h2>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="width: 32px;">NO</th>
+                  <th rowspan="2" style="width: 280px;">UPT</th>
+                  <th colspan="7">AGAMA</th>
+                  <th rowspan="2" style="width: 100px;">JUMLAH</th>
+                </tr>
+                <tr>
+                  <th>ISLAM</th>
+                  <th>PROSTESTAN</th>
+                  <th>KHATOLIK</th>
+                  <th>HINDU</th>
+                  <th>BUDHA</th>
+                  <th>KHONGHUCU</th>
+                  <th>LAIN-LAIN</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-table5">
+                <!-- Rendered via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= SLIDE 7: REKAPITULASI JUMLAH KEPEMILIKAN IDENTITAS ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 7 dari 8 — Rekapitulasi Kepemilikan Identitas (NIK &amp; KTP Fisik)</div>
+        <section id="slide-7" class="slide-page slide-table-page">
+          <div class="slide-title-bar">
+            <h2>REKAPITULASI JUMLAH KEPEMILIKAN IDENTITAS</h2>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th rowspan="3" style="width: 32px;">NO</th>
+                  <th rowspan="3" style="width: 280px;">UPT</th>
+                  <th colspan="6">KEPEMILIKAN IDENTITAS</th>
+                </tr>
+                <tr>
+                  <th colspan="3">NOMOR INDUK KEPENDUDUKAN (NIK)</th>
+                  <th colspan="3">KARTU TANDA PENDUDUK (KTP)</th>
+                </tr>
+                <tr>
+                  <th>ADA NIK</th>
+                  <th>TIDAK ADA NIK</th>
+                  <th>JUMLAH</th>
+                  <th>ADA KTP</th>
+                  <th>TIDAK ADA KTP</th>
+                  <th>JUMLAH</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-table6">
+                <!-- Rendered via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= SLIDE 8: CLOSING ================= -->
+      <div class="slide-card-container">
+        <div class="slide-badge-title no-print">Slide 8 dari 8 — Halaman Penutup</div>
+        <section id="slide-8" class="slide-page slide-closing">
+          <!-- Full Graphic Closing Slide identical to official template -->
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       FOOTER BRANDING (OFFICIAL & CLEAN)
+       ========================================================================= -->
+  <footer class="app-footer no-print">
+    <img src="assets/Logo Permasyarakatan.webp" alt="Logo Pemasyarakatan" style="height: 48px; width: auto; opacity: 0.9;">
+    <p style="font-size: 0.82rem; color: #64748b; font-weight: 600;">
+      Kantor Wilayah Direktorat Jenderal Pemasyarakatan Kalimantan Selatan
+    </p>
+    <p style="font-size: 0.75rem; color: #94a3b8;">
+      Pemasyarakatan Pasti Bermanfaat Untuk Masyarakat &bull; Sistem Rekapitulasi Pelaporan Otomatis
+    </p>
+  </footer>
+
+  <!-- =========================================================================
+       MODAL DIALOG: DATABASE & REGISTRASI SPREADSHEET (MODERN & BEST PRACTICE)
+       ========================================================================= -->
+  <div id="modalSpreadsheet" class="modal-overlay no-print">
+    <div class="modal-card">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title-text">
+            <h3>Database &amp; Registrasi Spreadsheet</h3>
+            <p>Kelola tautan Google Spreadsheet dan salinan database lokal</p>
+          </div>
+        </div>
+        <button id="btnCloseSsModal" class="modal-close-btn" title="Tutup Modal">&times;</button>
+      </div>
+
+      <!-- Segmented Navigation Tabs -->
+      <div class="modal-tabs-bar">
+        <div class="modal-tabs-nav">
+          <button type="button" class="modal-tab-btn active" data-tab="tabList">
+            <span>Dokumen Terdaftar</span>
+            <span id="dbItemCount" class="tab-pill-badge">1</span>
+          </button>
+          <button type="button" class="modal-tab-btn" data-tab="tabAdd">
+            <span>+ Daftarkan Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- 1. TAB LIST: DAFTAR DOKUMEN -->
+        <div id="tabList" class="modal-tab-pane active">
+          <div class="doc-list-toolbar">
+            <span class="doc-list-info">Pilih dokumen yang ingin dibuka atau disinkronkan:</span>
+            <button type="button" id="btnGoToAddTab" class="btn-link-add">
+              + Daftarkan Spreadsheet Baru
+            </button>
+          </div>
+          
+          <div id="docCardsList" class="doc-cards-list">
+            <!-- Rendered dynamically via app.js -->
+          </div>
+        </div>
+
+        <!-- 2. TAB ADD: DAFTARKAN FILE BARU -->
+        <div id="tabAdd" class="modal-tab-pane">
+          <div class="modern-form-wrap">
+            <div class="banner-notice">
+              <span class="banner-notice-badge">INFO</span>
+              <div class="banner-notice-text">
+                <strong>Penyimpanan Snapshot Otomatis:</strong> Data Google Spreadsheet akan otomatis disalin ke database lokal saat didaftarkan, sehingga dokumen dapat dibuka instan (0 detik) kapan saja tanpa perlu menunggu loading Google Sheets berulang kali.
+              </div>
+            </div>
+
+            <div class="field-block">
+              <label for="inputSsUrl" class="field-label">
+                Tautan (URL) atau ID Google Spreadsheet <span class="required-star">*</span>
+              </label>
+              <input type="text" id="inputSsUrl" class="field-input" placeholder="https://docs.google.com/spreadsheets/d/1-0rXQqvGqFzgyl48EbLe7Kfbi6Wz1YZ_sDmWoEOLTtw/edit">
+              <span class="field-hint">Salin langsung dari address bar browser atau masukkan Spreadsheet ID.</span>
+            </div>
+
+            <div class="field-grid-two">
+              <div class="field-block">
+                <label for="inputSsLabel" class="field-label">
+                  Nama / Label Dokumen
+                </label>
+                <input type="text" id="inputSsLabel" class="field-input" placeholder="Contoh: Rekap WBP November 2026">
+                <span class="field-hint">Label pengenal yang akan muncul di pilihan dokumen.</span>
+              </div>
+
+              <div class="field-block" style="justify-content: flex-end;">
+                <label class="switch-card" title="Jadikan spreadsheet ini yang otomatis dibuka saat dashboard pertama kali dibuka">
+                  <input type="checkbox" id="chkSetDefault">
+                  <div class="switch-card-text">
+                    <strong>Jadikan Default</strong>
+                    <span>Otomatis dimuat saat membuka dashboard</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-submit-row">
+              <button id="btnApplySs" type="button" class="btn-submit-modern">
+                Daftarkan &amp; Salin Data ke Database
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button id="btnResetDefaultSs" type="button" class="btn-footer-link" title="Kembalikan ke spreadsheet bawaan Oktober 2026">
+          Reset ke Default (Oktober 2026)
+        </button>
+        <button id="btnCancelSsModal" type="button" class="btn-footer-secondary">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingModal" class="loading-modal hidden">
+    <img src="assets/Logo Permasyarakatan.webp" alt="Logo Pemasyarakatan" style="height: 60px; width: auto; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));">
+    <div class="spinner"></div>
+    <p id="loadingText" style="font-weight: 600; font-size: 0.95rem;">Memuat data...</p>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

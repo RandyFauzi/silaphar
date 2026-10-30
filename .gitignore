@@ -1,0 +1,18 @@
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor / IDE Configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary & Log Files
+*.log
+scratch/
+find_emojis.py
+verify_*.php
+emojis_found.txt
