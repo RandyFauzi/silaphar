@@ -145,6 +145,7 @@ const dbService = {
 document.addEventListener("DOMContentLoaded", async () => {
   setupEventListeners();
   setupSpreadsheetModalListeners();
+  setupPdfModalListeners();
   setupMobileResponsiveScaler();
   
   // Pasang tanggal hari ini secara default di input & cover
@@ -220,18 +221,18 @@ function setupEventListeners() {
   const btnSavePdf = document.getElementById("btnSavePdf");
   if (btnSavePdf) {
     btnSavePdf.addEventListener("click", () => {
-      openSavePdfDialog();
+      openPdfDownloadModal();
     });
   }
 
   // Kompatibilitas tombol lama
   const btnDownloadPdf = document.getElementById("btnDownloadPdf");
   if (btnDownloadPdf) {
-    btnDownloadPdf.addEventListener("click", openSavePdfDialog);
+    btnDownloadPdf.addEventListener("click", openPdfDownloadModal);
   }
   const btnPrintPdf = document.getElementById("btnPrintPdf");
   if (btnPrintPdf) {
-    btnPrintPdf.addEventListener("click", openSavePdfDialog);
+    btnPrintPdf.addEventListener("click", openPdfDownloadModal);
   }
 
   if (chkAutoDate) {
@@ -1091,13 +1092,221 @@ function renderTable6(dataRows, summaryRow) {
 }
 
 // =============================================================================
-// PDF GENERATION (Browser Native Save As PDF)
+// PDF GENERATION & EXPORT (DIRECT DOWNLOAD FOR MOBILE/DESKTOP & BROWSER PRINT)
 // =============================================================================
-function openSavePdfDialog() {
+function openPdfDownloadModal() {
   if (chkAutoDate && chkAutoDate.checked && rawSheetData) {
     applySheetDate(rawSheetData);
   }
-  window.print();
+  
+  const modal = document.getElementById("modalPdfDownload");
+  const modalDate = document.getElementById("pdfModalDate");
+  const progressBox = document.getElementById("pdfProgressBox");
+  const btnDirect = document.getElementById("btnDirectDownloadPdf");
+  const btnPrint = document.getElementById("btnBrowserPrintPdf");
+
+  if (modalDate && coverDateDisplay) {
+    modalDate.innerText = coverDateDisplay.innerText.trim() || "Hari Ini";
+  }
+  if (progressBox) progressBox.classList.add("hidden");
+  if (btnDirect) btnDirect.disabled = false;
+  if (btnPrint) btnPrint.disabled = false;
+  if (modal) modal.classList.remove("hidden");
+  document.body.classList.add("modal-open");
+}
+
+function openSavePdfDialog() {
+  openPdfDownloadModal();
+}
+
+function closePdfModal() {
+  const modal = document.getElementById("modalPdfDownload");
+  if (modal) modal.classList.add("hidden");
+  document.body.classList.remove("modal-open");
+}
+
+function triggerBrowserPrint() {
+  closePdfModal();
+  setTimeout(() => {
+    window.print();
+  }, 200);
+}
+
+function preparePdfExportContainer() {
+  const container = document.createElement("div");
+  container.id = "pdfExportStaging";
+  container.className = "pdf-export-container";
+
+  for (let i = 1; i <= 8; i++) {
+    const originalSlide = document.getElementById("slide-" + i);
+    if (!originalSlide) continue;
+
+    const clonedSlide = originalSlide.cloneNode(true);
+    clonedSlide.removeAttribute("id");
+
+    // Hapus tombol zoom atau elemen khusus layar
+    const unwanted = clonedSlide.querySelectorAll(".btn-slide-zoom, .no-print");
+    unwanted.forEach((el) => el.remove());
+
+    // Berikan styling inline pasti 1440x810 agar tidak terpengaruh responsive scaling HP
+    clonedSlide.style.width = "1440px";
+    clonedSlide.style.height = "810px";
+    clonedSlide.style.minWidth = "1440px";
+    clonedSlide.style.minHeight = "810px";
+    clonedSlide.style.maxWidth = "1440px";
+    clonedSlide.style.maxHeight = "810px";
+    clonedSlide.style.transform = "none";
+    clonedSlide.style.margin = "0";
+    clonedSlide.style.boxSizing = "border-box";
+    clonedSlide.style.boxShadow = "none";
+    clonedSlide.style.borderRadius = "0";
+    clonedSlide.style.overflow = "hidden";
+    clonedSlide.style.display = "flex";
+    clonedSlide.style.flexDirection = "column";
+
+    if (i === 1) {
+      clonedSlide.style.backgroundImage = "url('assets/cover_template.png')";
+      clonedSlide.style.backgroundSize = "cover";
+      clonedSlide.style.backgroundPosition = "center";
+      clonedSlide.style.padding = "0";
+    } else if (i === 8) {
+      clonedSlide.style.backgroundImage = "url('assets/closing.png')";
+      clonedSlide.style.backgroundSize = "cover";
+      clonedSlide.style.backgroundPosition = "center";
+      clonedSlide.style.padding = "0";
+    } else {
+      clonedSlide.style.backgroundImage = "url('assets/table_bg.jpg')";
+      clonedSlide.style.backgroundSize = "cover";
+      clonedSlide.style.backgroundPosition = "center";
+      clonedSlide.style.padding = "38px 46px";
+    }
+
+    container.appendChild(clonedSlide);
+  }
+
+  return container;
+}
+
+async function generateAndDownloadPdf() {
+  if (typeof html2pdf === "undefined") {
+    alert("Library pemroses PDF sedang dimuat. Mengalihkan ke menu cetak browser...");
+    triggerBrowserPrint();
+    return;
+  }
+
+  const btnDirect = document.getElementById("btnDirectDownloadPdf");
+  const btnPrint = document.getElementById("btnBrowserPrintPdf");
+  const progressBox = document.getElementById("pdfProgressBox");
+  const progressBar = document.getElementById("pdfProgressBar");
+  const progressLabel = document.getElementById("pdfProgressLabel");
+  const progressPercent = document.getElementById("pdfProgressPercent");
+
+  const updateProgress = (pct, text) => {
+    if (progressBar) progressBar.style.width = pct + "%";
+    if (progressPercent) progressPercent.innerText = pct + "%";
+    if (progressLabel) progressLabel.innerText = text;
+  };
+
+  try {
+    if (btnDirect) btnDirect.disabled = true;
+    if (btnPrint) btnPrint.disabled = true;
+    if (progressBox) progressBox.classList.remove("hidden");
+
+    updateProgress(15, "Menyiapkan lembar rekapitulasi data 1440x810...");
+
+    // Pastikan tanggal terbaru diaplikasikan
+    if (chkAutoDate && chkAutoDate.checked && rawSheetData) {
+      applySheetDate(rawSheetData);
+    }
+
+    // Buat nama file resmi berdasarkan tanggal
+    let dateStr = "";
+    if (coverDateDisplay && coverDateDisplay.innerText) {
+      dateStr = coverDateDisplay.innerText.trim().replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
+    }
+    const filename = `SILAPHAR_Rekap_WBP_${dateStr || "Terbaru"}.pdf`;
+
+    updateProgress(35, "Menyusun 8 halaman slide lanskap...");
+    const staging = preparePdfExportContainer();
+    document.body.appendChild(staging);
+
+    updateProgress(55, "Merender dokumen ke format PDF resolusi tinggi...");
+
+    const opt = {
+      margin: 0,
+      filename: filename,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 1, // Resolusi 1:1 HD 1440x810, tajam, zero pixel drift, aman di memori HP
+        useCORS: true,
+        scrollY: 0,
+        scrollX: 0,
+        logging: false,
+        windowWidth: 1440
+      },
+      jsPDF: {
+        unit: "px",
+        format: [1440, 810],
+        orientation: "landscape",
+        hotfixes: ["px_scaling"]
+      }
+    };
+
+    updateProgress(75, "Menyimpan file PDF ke perangkat Anda...");
+    await html2pdf().from(staging).set(opt).save();
+
+    // Bersihkan staging container dari DOM
+    if (staging && staging.parentNode) {
+      staging.parentNode.removeChild(staging);
+    }
+
+    updateProgress(100, "Berhasil! File PDF telah diunduh.");
+
+    setTimeout(() => {
+      if (progressBox) progressBox.classList.add("hidden");
+      if (btnDirect) btnDirect.disabled = false;
+      if (btnPrint) btnPrint.disabled = false;
+      closePdfModal();
+    }, 1200);
+
+  } catch (err) {
+    console.error("Gagal membuat PDF langsung:", err);
+    updateProgress(100, "Gagal membuat PDF otomatis. Mengalihkan ke menu cetak...");
+    
+    const staging = document.getElementById("pdfExportStaging");
+    if (staging && staging.parentNode) staging.parentNode.removeChild(staging);
+
+    setTimeout(() => {
+      if (progressBox) progressBox.classList.add("hidden");
+      if (btnDirect) btnDirect.disabled = false;
+      if (btnPrint) btnPrint.disabled = false;
+      closePdfModal();
+      window.print();
+    }, 1500);
+  }
+}
+
+function setupPdfModalListeners() {
+  const btnClosePdf = document.getElementById("btnClosePdfModal");
+  if (btnClosePdf) {
+    btnClosePdf.addEventListener("click", closePdfModal);
+  }
+  const btnCancelPdf = document.getElementById("btnCancelPdfModal");
+  if (btnCancelPdf) {
+    btnCancelPdf.addEventListener("click", closePdfModal);
+  }
+  const backdropPdf = document.getElementById("backdropPdfModal");
+  if (backdropPdf) {
+    backdropPdf.addEventListener("click", closePdfModal);
+  }
+  const btnDirectDownload = document.getElementById("btnDirectDownloadPdf");
+  if (btnDirectDownload) {
+    btnDirectDownload.addEventListener("click", generateAndDownloadPdf);
+  }
+  const btnBrowserPrint = document.getElementById("btnBrowserPrintPdf");
+  if (btnBrowserPrint) {
+    btnBrowserPrint.addEventListener("click", triggerBrowserPrint);
+  }
 }
 
 function showLoader(msg) {

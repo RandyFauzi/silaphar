@@ -1846,11 +1846,228 @@ body.modal-open {
 }
 
 /* ==========================================================================
+   MODAL DOWNLOAD PDF (DIRECT DOWNLOAD & BROWSER PRINT)
+   ========================================================================== */
+.modal-pdf-card {
+  max-width: 580px;
+  width: 95%;
+}
+
+.pdf-meta-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pdf-meta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.pdf-meta-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pdf-meta-val {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+}
+
+.pdf-action-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.pdf-option-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.pdf-option-card.highlighted {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.pdf-option-tag {
+  display: inline-block;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  width: fit-content;
+}
+
+.pdf-option-tag.tag-secondary {
+  background: #64748b;
+}
+
+.pdf-option-title {
+  margin: 0 0 4px 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pdf-option-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.btn-pdf-action {
+  width: 100%;
+  padding: 11px 16px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.btn-pdf-primary {
+  background: #059669;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
+}
+
+.btn-pdf-primary:hover:not(:disabled) {
+  background: #047857;
+}
+
+.btn-pdf-secondary {
+  background: #ffffff;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+}
+
+.btn-pdf-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.btn-pdf-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Progress indicator inside PDF modal */
+.pdf-progress-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 10px;
+}
+
+.pdf-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.pdf-progress-percent {
+  color: #059669;
+  font-weight: 800;
+}
+
+.pdf-progress-track {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.pdf-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.pdf-progress-hint {
+  margin: 0;
+  font-size: 0.74rem;
+  color: #64748b;
+  text-align: center;
+}
+
+/* Offscreen container for pixel-perfect PDF rendering */
+.pdf-export-container {
+  position: absolute !important;
+  left: -9999px !important;
+  top: 0 !important;
+  width: 1440px !important;
+  min-width: 1440px !important;
+  max-width: 1440px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+  z-index: -9999 !important;
+}
+
+.pdf-export-container .slide-page {
+  position: relative !important;
+  width: 1440px !important;
+  height: 810px !important;
+  min-width: 1440px !important;
+  min-height: 810px !important;
+  max-width: 1440px !important;
+  max-height: 810px !important;
+  transform: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  page-break-after: always !important;
+  break-after: page !important;
+  box-sizing: border-box !important;
+}
+
+.pdf-export-container .slide-page:last-child {
+  page-break-after: auto !important;
+  break-after: auto !important;
+}
+
+/* ==========================================================================
    PRINT / PDF EXPORT CSS (EXACT DIMENSION 1440x810 LANDSCAPE)
    ========================================================================== */
 @media print {
   @page {
-    size: 1440px 810px;
+    size: landscape;
     margin: 0;
   }
   
@@ -1874,6 +2091,9 @@ body.modal-open {
   .btn-slide-zoom,
   .slide-zoom-modal,
   .loading-modal,
+  .modal-modern,
+  #modalPdfDownload,
+  .pdf-export-container,
   .app-footer {
     display: none !important;
   }
