@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20261031_05">
 </head>
 <body>
 
@@ -22,19 +22,28 @@
       <div class="brand-wrapper">
         <img src="assets/Logo Permasyarakatan.webp" alt="Logo Pemasyarakatan" class="app-logo">
         <div class="brand-text">
-          <h1>SISTEM REKAPITULASI &amp; PELAPORAN WBP</h1>
-          <p>KANTOR WILAYAH DIREKTORAT JENDERAL PEMASYARAKATAN KALIMANTAN SELATAN</p>
+          <h1>
+            <span class="brand-full-text">SISTEM REKAPITULASI &amp; PELAPORAN WBP</span>
+            <span class="brand-mobile-text">SILAPHAR KALSEL</span>
+          </h1>
+          <p>
+            <span class="brand-full-sub">KANTOR WILAYAH DIREKTORAT JENDERAL PEMASYARAKATAN KALIMANTAN SELATAN</span>
+            <span class="brand-mobile-sub">Kanwil Ditjenpas Kalsel</span>
+          </p>
         </div>
       </div>
       <div class="header-actions">
         <button id="btnOpenSsModal" class="btn btn-outline-light" title="Buka Database Spreadsheet">
-          Database Spreadsheet
+          <span class="btn-full-text">Database Spreadsheet</span>
+          <span class="btn-mobile-text">Database</span>
         </button>
         <button id="btnRefresh" class="btn btn-outline-light" title="Sinkronkan data dari Google Spreadsheet">
-          Sinkronkan Data
+          <span class="btn-full-text">Sinkronkan Data</span>
+          <span class="btn-mobile-text">Sync</span>
         </button>
         <button id="btnSavePdf" class="btn btn-primary" title="Buka dialog Simpan sebagai PDF">
-          Simpan sebagai PDF (8 Halaman)
+          <span class="btn-full-text">Simpan sebagai PDF (8 Halaman)</span>
+          <span class="btn-mobile-text">PDF</span>
         </button>
       </div>
     </header>
@@ -104,7 +113,7 @@
     <div id="slidesWrapper" class="slides-wrapper">
 
       <!-- ================= SLIDE 1: COVER ================= -->
-      <div class="slide-card-container">
+      <div class="slide-card-container cover-card">
         <div class="slide-badge-title no-print">Slide 1 dari 8 — Halaman Judul / Cover Laporan</div>
         <section id="slide-1" class="slide-page slide-cover">
           <!-- Dynamic Date Overlay -->
@@ -115,8 +124,11 @@
       </div>
 
       <!-- ================= SLIDE 2: REKAPITULASI JUMLAH NARAPIDANA DAN TAHANAN ================= -->
-      <div class="slide-card-container">
-        <div class="slide-badge-title no-print">Slide 2 dari 8 — Rekapitulasi Jumlah Narapidana dan Tahanan</div>
+      <div class="slide-card-container table-card">
+        <div class="slide-badge-title no-print">
+          <span>Slide 2 dari 8 — Rekapitulasi Jumlah Narapidana dan Tahanan</span>
+          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+        </div>
         <section id="slide-2" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH NARAPIDANA DAN TAHANAN</h2>
@@ -153,8 +165,11 @@
       </div>
 
       <!-- ================= SLIDE 3: REKAPITULASI HAK INTEGRASI ================= -->
-      <div class="slide-card-container">
-        <div class="slide-badge-title no-print">Slide 3 dari 8 — Rekapitulasi Hak Integrasi (PB, CB, CMB, CMK, Asimilasi)</div>
+      <div class="slide-card-container table-card">
+        <div class="slide-badge-title no-print">
+          <span>Slide 3 dari 8 — Rekapitulasi Hak Integrasi (PB, CB, CMB, CMK, Asimilasi)</span>
+          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+        </div>
         <section id="slide-3" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI HAK INTEGRASI</h2>
@@ -186,8 +201,11 @@
       </div>
 
       <!-- ================= SLIDE 4: REKAPITULASI JUMLAH PIDSUS ================= -->
-      <div class="slide-card-container">
-        <div class="slide-badge-title no-print">Slide 4 dari 8 — Rekapitulasi Jumlah Tindak Pidana Khusus (Pidsus)</div>
+      <div class="slide-card-container table-card">
+        <div class="slide-badge-title no-print">
+          <span>Slide 4 dari 8 — Rekapitulasi Jumlah Tindak Pidana Khusus (Pidsus)</span>
+          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+        </div>
         <section id="slide-4" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH PIDSUS</h2>
@@ -219,8 +237,11 @@
       </div>
 
       <!-- ================= SLIDE 5: REKAPITULASI JUMLAH PIDUM DAN JENIS PIDANA ================= -->
-      <div class="slide-card-container">
-        <div class="slide-badge-title no-print">Slide 5 dari 8 — Rekapitulasi Jumlah Tindak Pidana Umum &amp; Vonis Khusus</div>
+      <div class="slide-card-container table-card">
+        <div class="slide-badge-title no-print">
+          <span>Slide 5 dari 8 — Rekapitulasi Jumlah Tindak Pidana Umum &amp; Vonis Khusus</span>
+          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+        </div>
         <section id="slide-5" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH PIDUM DAN JENIS PIDANA</h2>
@@ -254,8 +275,11 @@
       </div>
 
       <!-- ================= SLIDE 6: REKAPITULASI JUMLAH PENGHUNI BERDASARKAN AGAMA ================= -->
-      <div class="slide-card-container">
-        <div class="slide-badge-title no-print">Slide 6 dari 8 — Rekapitulasi Jumlah Penghuni Berdasarkan Agama</div>
+      <div class="slide-card-container table-card">
+        <div class="slide-badge-title no-print">
+          <span>Slide 6 dari 8 — Rekapitulasi Jumlah Penghuni Berdasarkan Agama</span>
+          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+        </div>
         <section id="slide-6" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH PENGHUNI BERDASARKAN AGAMA</h2>
@@ -288,8 +312,11 @@
       </div>
 
       <!-- ================= SLIDE 7: REKAPITULASI JUMLAH KEPEMILIKAN IDENTITAS ================= -->
-      <div class="slide-card-container">
-        <div class="slide-badge-title no-print">Slide 7 dari 8 — Rekapitulasi Kepemilikan Identitas (NIK &amp; KTP Fisik)</div>
+      <div class="slide-card-container table-card">
+        <div class="slide-badge-title no-print">
+          <span>Slide 7 dari 8 — Rekapitulasi Kepemilikan Identitas (NIK &amp; KTP Fisik)</span>
+          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+        </div>
         <section id="slide-7" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH KEPEMILIKAN IDENTITAS</h2>
@@ -324,7 +351,7 @@
       </div>
 
       <!-- ================= SLIDE 8: CLOSING ================= -->
-      <div class="slide-card-container">
+      <div class="slide-card-container cover-card">
         <div class="slide-badge-title no-print">Slide 8 dari 8 — Halaman Penutup</div>
         <section id="slide-8" class="slide-page slide-closing">
           <!-- Full Graphic Closing Slide identical to official template -->
@@ -459,6 +486,6 @@
     <p id="loadingText" style="font-weight: 600; font-size: 0.95rem;">Memuat data...</p>
   </div>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=20261031_05"></script>
 </body>
 </html>
