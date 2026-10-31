@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261031_05">
+  <link rel="stylesheet" href="css/style.css?v=20261031_06">
 </head>
 <body>
 
@@ -110,26 +110,50 @@
        MAIN PRESENTATION VIEWPORT (1440px x 810px per Slide 16:9 Landscape)
        ========================================================================= -->
   <main class="main-viewport">
+
+    <!-- Bilah Pilihan Mode Tampilan Mobile (Slide 16:9 vs Tabel Geser) -->
+    <div class="view-mode-bar no-print">
+      <span class="view-mode-label">Mode Tampilan:</span>
+      <div class="view-mode-pills">
+        <button type="button" id="btnModeSlide" class="mode-pill active" title="Semua slide ditampilkan pas 16:9 seperti Slide 1">
+          Slide 16:9 (Pas Layar)
+        </button>
+        <button type="button" id="btnModeTable" class="mode-pill" title="Tabel ditampilkan langsung dalam mode geser lebar">
+          Tabel Geser Lebar
+        </button>
+      </div>
+    </div>
+
     <div id="slidesWrapper" class="slides-wrapper">
 
       <!-- ================= SLIDE 1: COVER ================= -->
-      <div class="slide-card-container cover-card">
-        <div class="slide-badge-title no-print">Slide 1 dari 8 — Halaman Judul / Cover Laporan</div>
-        <section id="slide-1" class="slide-page slide-cover">
-          <!-- Dynamic Date Overlay -->
-          <div id="coverDateDisplay" class="cover-date-text">
-            SABTU, 31 OKTOBER 2026
-          </div>
-        </section>
+      <div class="slide-card-container cover-card" data-slide-index="1">
+        <div class="slide-badge-title no-print">
+          <span class="slide-badge-label">Slide 1 dari 8 — Halaman Judul / Cover Laporan</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-1" title="Perbesar rincian slide">
+            Perbesar
+          </button>
+        </div>
+        <div class="slide-viewport-scaler">
+          <section id="slide-1" class="slide-page slide-cover">
+            <!-- Dynamic Date Overlay -->
+            <div id="coverDateDisplay" class="cover-date-text">
+              SABTU, 31 OKTOBER 2026
+            </div>
+          </section>
+        </div>
       </div>
 
       <!-- ================= SLIDE 2: REKAPITULASI JUMLAH NARAPIDANA DAN TAHANAN ================= -->
-      <div class="slide-card-container table-card">
+      <div class="slide-card-container table-card" data-slide-index="2">
         <div class="slide-badge-title no-print">
-          <span>Slide 2 dari 8 — Rekapitulasi Jumlah Narapidana dan Tahanan</span>
-          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+          <span class="slide-badge-label">Slide 2 dari 8 — Rekapitulasi Jumlah Narapidana dan Tahanan</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-2" title="Perbesar rincian tabel">
+            Perbesar
+          </button>
         </div>
-        <section id="slide-2" class="slide-page slide-table-page">
+        <div class="slide-viewport-scaler">
+          <section id="slide-2" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH NARAPIDANA DAN TAHANAN</h2>
           </div>
@@ -162,15 +186,19 @@
             </table>
           </div>
         </section>
+        </div>
       </div>
 
       <!-- ================= SLIDE 3: REKAPITULASI HAK INTEGRASI ================= -->
-      <div class="slide-card-container table-card">
+      <div class="slide-card-container table-card" data-slide-index="3">
         <div class="slide-badge-title no-print">
-          <span>Slide 3 dari 8 — Rekapitulasi Hak Integrasi (PB, CB, CMB, CMK, Asimilasi)</span>
-          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+          <span class="slide-badge-label">Slide 3 dari 8 — Rekapitulasi Hak Integrasi (PB, CB, CMB, CMK, Asimilasi)</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-3" title="Perbesar rincian tabel">
+            Perbesar
+          </button>
         </div>
-        <section id="slide-3" class="slide-page slide-table-page">
+        <div class="slide-viewport-scaler">
+          <section id="slide-3" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI HAK INTEGRASI</h2>
           </div>
@@ -198,15 +226,19 @@
             </table>
           </div>
         </section>
+        </div>
       </div>
 
       <!-- ================= SLIDE 4: REKAPITULASI JUMLAH PIDSUS ================= -->
-      <div class="slide-card-container table-card">
+      <div class="slide-card-container table-card" data-slide-index="4">
         <div class="slide-badge-title no-print">
-          <span>Slide 4 dari 8 — Rekapitulasi Jumlah Tindak Pidana Khusus (Pidsus)</span>
-          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+          <span class="slide-badge-label">Slide 4 dari 8 — Rekapitulasi Jumlah Tindak Pidana Khusus (Pidsus)</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-4" title="Perbesar rincian tabel">
+            Perbesar
+          </button>
         </div>
-        <section id="slide-4" class="slide-page slide-table-page">
+        <div class="slide-viewport-scaler">
+          <section id="slide-4" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH PIDSUS</h2>
           </div>
@@ -234,15 +266,19 @@
             </table>
           </div>
         </section>
+        </div>
       </div>
 
       <!-- ================= SLIDE 5: REKAPITULASI JUMLAH PIDUM DAN JENIS PIDANA ================= -->
-      <div class="slide-card-container table-card">
+      <div class="slide-card-container table-card" data-slide-index="5">
         <div class="slide-badge-title no-print">
-          <span>Slide 5 dari 8 — Rekapitulasi Jumlah Tindak Pidana Umum &amp; Vonis Khusus</span>
-          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+          <span class="slide-badge-label">Slide 5 dari 8 — Rekapitulasi Jumlah Tindak Pidana Umum &amp; Vonis Khusus</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-5" title="Perbesar rincian tabel">
+            Perbesar
+          </button>
         </div>
-        <section id="slide-5" class="slide-page slide-table-page">
+        <div class="slide-viewport-scaler">
+          <section id="slide-5" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH PIDUM DAN JENIS PIDANA</h2>
           </div>
@@ -272,15 +308,19 @@
             </table>
           </div>
         </section>
+        </div>
       </div>
 
       <!-- ================= SLIDE 6: REKAPITULASI JUMLAH PENGHUNI BERDASARKAN AGAMA ================= -->
-      <div class="slide-card-container table-card">
+      <div class="slide-card-container table-card" data-slide-index="6">
         <div class="slide-badge-title no-print">
-          <span>Slide 6 dari 8 — Rekapitulasi Jumlah Penghuni Berdasarkan Agama</span>
-          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+          <span class="slide-badge-label">Slide 6 dari 8 — Rekapitulasi Jumlah Penghuni Berdasarkan Agama</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-6" title="Perbesar rincian tabel">
+            Perbesar
+          </button>
         </div>
-        <section id="slide-6" class="slide-page slide-table-page">
+        <div class="slide-viewport-scaler">
+          <section id="slide-6" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH PENGHUNI BERDASARKAN AGAMA</h2>
           </div>
@@ -309,15 +349,19 @@
             </table>
           </div>
         </section>
+        </div>
       </div>
 
       <!-- ================= SLIDE 7: REKAPITULASI JUMLAH KEPEMILIKAN IDENTITAS ================= -->
-      <div class="slide-card-container table-card">
+      <div class="slide-card-container table-card" data-slide-index="7">
         <div class="slide-badge-title no-print">
-          <span>Slide 7 dari 8 — Rekapitulasi Kepemilikan Identitas (NIK &amp; KTP Fisik)</span>
-          <span class="swipe-hint-pill">Geser tabel &rarr;</span>
+          <span class="slide-badge-label">Slide 7 dari 8 — Rekapitulasi Kepemilikan Identitas (NIK &amp; KTP Fisik)</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-7" title="Perbesar rincian tabel">
+            Perbesar
+          </button>
         </div>
-        <section id="slide-7" class="slide-page slide-table-page">
+        <div class="slide-viewport-scaler">
+          <section id="slide-7" class="slide-page slide-table-page">
           <div class="slide-title-bar">
             <h2>REKAPITULASI JUMLAH KEPEMILIKAN IDENTITAS</h2>
           </div>
@@ -348,14 +392,22 @@
             </table>
           </div>
         </section>
+        </div>
       </div>
 
       <!-- ================= SLIDE 8: CLOSING ================= -->
-      <div class="slide-card-container cover-card">
-        <div class="slide-badge-title no-print">Slide 8 dari 8 — Halaman Penutup</div>
-        <section id="slide-8" class="slide-page slide-closing">
-          <!-- Full Graphic Closing Slide identical to official template -->
-        </section>
+      <div class="slide-card-container cover-card" data-slide-index="8">
+        <div class="slide-badge-title no-print">
+          <span class="slide-badge-label">Slide 8 dari 8 — Halaman Penutup</span>
+          <button type="button" class="btn-slide-zoom no-print" data-target="slide-8" title="Perbesar rincian slide">
+            Perbesar
+          </button>
+        </div>
+        <div class="slide-viewport-scaler">
+          <section id="slide-8" class="slide-page slide-closing">
+            <!-- Full Graphic Closing Slide identical to official template -->
+          </section>
+        </div>
       </div>
 
     </div>
@@ -479,6 +531,30 @@
     </div>
   </div>
 
+  <!-- Modal Zoom Slide High-Res (Mobile & Desktop) -->
+  <div id="modalSlideZoom" class="slide-zoom-modal hidden no-print" role="dialog" aria-modal="true">
+    <div class="slide-zoom-backdrop"></div>
+    <div class="slide-zoom-wrapper">
+      <div class="slide-zoom-header">
+        <div class="slide-zoom-title-area">
+          <h3 id="zoomSlideTitle">Rincian Slide</h3>
+          <p id="zoomSlideSubtitle">Geser ke kanan / kiri untuk membaca seluruh rincian kolom data secara tajam</p>
+        </div>
+        <button id="btnCloseZoomModal" class="btn-zoom-close" title="Tutup pratinjau slide">&times;</button>
+      </div>
+      <div id="slideZoomBody" class="slide-zoom-body">
+        <div id="slideZoomContent" class="slide-zoom-content">
+          <!-- Cloned slide displayed in full 1440px resolution -->
+        </div>
+      </div>
+      <div class="slide-zoom-footer">
+        <button id="btnPrevZoomSlide" class="btn-zoom-nav">&larr; Slide Sebelumnya</button>
+        <span id="zoomSlideCounter" class="zoom-counter">1 / 8</span>
+        <button id="btnNextZoomSlide" class="btn-zoom-nav">Slide Berikutnya &rarr;</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Loading Overlay -->
   <div id="loadingModal" class="loading-modal hidden">
     <img src="assets/Logo Permasyarakatan.webp" alt="Logo Pemasyarakatan" style="height: 60px; width: auto; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));">
@@ -486,6 +562,6 @@
     <p id="loadingText" style="font-weight: 600; font-size: 0.95rem;">Memuat data...</p>
   </div>
 
-  <script src="js/app.js?v=20261031_05"></script>
+  <script src="js/app.js?v=20261031_06"></script>
 </body>
 </html>

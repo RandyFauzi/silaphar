@@ -145,6 +145,7 @@ const dbService = {
 document.addEventListener("DOMContentLoaded", async () => {
   setupEventListeners();
   setupSpreadsheetModalListeners();
+  setupMobileResponsiveScaler();
   
   // Pasang tanggal hari ini secara default di input & cover
   const todayStr = getIndonesianDate(new Date());
@@ -1109,5 +1110,176 @@ function showLoader(msg) {
 function hideLoader() {
   if (loadingModal) {
     loadingModal.classList.add("hidden");
+  }
+}
+
+// =============================================================================
+// MOBILE RESPONSIVE 16:9 SCALER & HIGH-RES ZOOM MODAL (BEST PRACTICE)
+// =============================================================================
+let currentZoomSlideIndex = 1;
+const TOTAL_SLIDES = 8;
+
+function setupMobileResponsiveScaler() {
+  function updateSlideScale() {
+    const scaler = document.querySelector(".slide-viewport-scaler");
+    if (scaler) {
+      const width = scaler.clientWidth;
+      if (width > 0 && width < 1400) {
+        const scale = width / 1440;
+        document.documentElement.style.setProperty("--slide-scale", scale.toString());
+      } else {
+        document.documentElement.style.setProperty("--slide-scale", "1");
+      }
+    }
+  }
+
+  // Update scale immediately and on window events
+  updateSlideScale();
+  window.addEventListener("resize", updateSlideScale);
+  window.addEventListener("orientationchange", () => {
+    setTimeout(updateSlideScale, 150);
+  });
+
+  // Mode Tampilan Toggle (Slide 16:9 vs Tabel Geser Lebar)
+  const btnModeSlide = document.getElementById("btnModeSlide");
+  const btnModeTable = document.getElementById("btnModeTable");
+  const slidesWrapper = document.getElementById("slidesWrapper");
+
+  if (btnModeSlide && btnModeTable && slidesWrapper) {
+    btnModeSlide.addEventListener("click", () => {
+      btnModeSlide.classList.add("active");
+      btnModeTable.classList.remove("active");
+      slidesWrapper.classList.remove("mode-table-active");
+      updateSlideScale();
+    });
+
+    btnModeTable.addEventListener("click", () => {
+      btnModeTable.classList.add("active");
+      btnModeSlide.classList.remove("active");
+      slidesWrapper.classList.add("mode-table-active");
+    });
+  }
+
+  // Klik pada tombol "Perbesar"
+  document.querySelectorAll(".btn-slide-zoom").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const container = btn.closest(".slide-card-container");
+      if (container) {
+        const index = container.getAttribute("data-slide-index");
+        if (index) openSlideZoom(index);
+      }
+    });
+  });
+
+  // Klik langsung pada viewport scaler di layar HP/tablet
+  document.querySelectorAll(".slide-viewport-scaler").forEach((scaler) => {
+    scaler.addEventListener("click", () => {
+      // Hanya aktif bila mode slide aktif dan ukuran layar HP/tablet <= 900px
+      if (window.innerWidth <= 900 && (!slidesWrapper || !slidesWrapper.classList.contains("mode-table-active"))) {
+        const container = scaler.closest(".slide-card-container");
+        if (container) {
+          const index = container.getAttribute("data-slide-index");
+          if (index) openSlideZoom(index);
+        }
+      }
+    });
+  });
+
+  // Modal Zoom Controls
+  const modalZoom = document.getElementById("modalSlideZoom");
+  const btnCloseZoom = document.getElementById("btnCloseZoomModal");
+  const btnPrevZoom = document.getElementById("btnPrevZoomSlide");
+  const btnNextZoom = document.getElementById("btnNextZoomSlide");
+
+  if (btnCloseZoom) {
+    btnCloseZoom.addEventListener("click", closeSlideZoom);
+  }
+
+  if (modalZoom) {
+    const backdrop = modalZoom.querySelector(".slide-zoom-backdrop");
+    if (backdrop) {
+      backdrop.addEventListener("click", closeSlideZoom);
+    }
+  }
+
+  if (btnPrevZoom) {
+    btnPrevZoom.addEventListener("click", () => {
+      if (currentZoomSlideIndex > 1) {
+        openSlideZoom(currentZoomSlideIndex - 1);
+      }
+    });
+  }
+
+  if (btnNextZoom) {
+    btnNextZoom.addEventListener("click", () => {
+      if (currentZoomSlideIndex < TOTAL_SLIDES) {
+        openSlideZoom(currentZoomSlideIndex + 1);
+      }
+    });
+  }
+
+  // Keyboard navigation
+  document.addEventListener("keydown", (e) => {
+    if (modalZoom && !modalZoom.classList.contains("hidden")) {
+      if (e.key === "Escape") closeSlideZoom();
+      if (e.key === "ArrowLeft" && currentZoomSlideIndex > 1) openSlideZoom(currentZoomSlideIndex - 1);
+      if (e.key === "ArrowRight" && currentZoomSlideIndex < TOTAL_SLIDES) openSlideZoom(currentZoomSlideIndex + 1);
+    }
+  });
+}
+
+function openSlideZoom(slideIndex) {
+  currentZoomSlideIndex = parseInt(slideIndex, 10) || 1;
+  const slideElem = document.getElementById(`slide-${currentZoomSlideIndex}`);
+  const container = document.querySelector(`[data-slide-index="${currentZoomSlideIndex}"]`);
+  const modal = document.getElementById("modalSlideZoom");
+  const modalContent = document.getElementById("slideZoomContent");
+  const modalTitle = document.getElementById("zoomSlideTitle");
+  const modalCounter = document.getElementById("zoomSlideCounter");
+  const btnPrev = document.getElementById("btnPrevZoomSlide");
+  const btnNext = document.getElementById("btnNextZoomSlide");
+
+  if (!slideElem || !modal || !modalContent) return;
+
+  // Judul Slide
+  let title = `Slide ${currentZoomSlideIndex} dari ${TOTAL_SLIDES}`;
+  if (container) {
+    const badge = container.querySelector(".slide-badge-label");
+    if (badge) title = badge.innerText;
+  }
+  if (modalTitle) modalTitle.innerText = title;
+  if (modalCounter) modalCounter.innerText = `${currentZoomSlideIndex} / ${TOTAL_SLIDES}`;
+
+  // Update tombol nav status
+  if (btnPrev) btnPrev.disabled = currentZoomSlideIndex <= 1;
+  if (btnNext) btnNext.disabled = currentZoomSlideIndex >= TOTAL_SLIDES;
+
+  // Clone slide content agar style dan live data asli tampil sempurna
+  modalContent.innerHTML = "";
+  const clone = slideElem.cloneNode(true);
+  clone.id = `zoom-clone-slide-${currentZoomSlideIndex}`;
+  modalContent.appendChild(clone);
+
+  modal.classList.remove("hidden");
+  document.body.classList.add("modal-open");
+
+  // Reset scroll position ke kiri atas
+  const zoomBody = document.getElementById("slideZoomBody");
+  if (zoomBody) {
+    zoomBody.scrollLeft = 0;
+    zoomBody.scrollTop = 0;
+  }
+}
+
+function closeSlideZoom() {
+  const modal = document.getElementById("modalSlideZoom");
+  if (modal) {
+    modal.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+  }
+  const modalContent = document.getElementById("slideZoomContent");
+  if (modalContent) {
+    modalContent.innerHTML = "";
   }
 }
