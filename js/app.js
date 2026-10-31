@@ -145,7 +145,6 @@ const dbService = {
 document.addEventListener("DOMContentLoaded", async () => {
   setupEventListeners();
   setupSpreadsheetModalListeners();
-  setupPdfModalListeners();
   setupMobileResponsiveScaler();
   
   // Pasang tanggal hari ini secara default di input & cover
@@ -221,18 +220,18 @@ function setupEventListeners() {
   const btnSavePdf = document.getElementById("btnSavePdf");
   if (btnSavePdf) {
     btnSavePdf.addEventListener("click", () => {
-      openPdfDownloadModal();
+      downloadPdfDirect();
     });
   }
 
   // Kompatibilitas tombol lama
   const btnDownloadPdf = document.getElementById("btnDownloadPdf");
   if (btnDownloadPdf) {
-    btnDownloadPdf.addEventListener("click", openPdfDownloadModal);
+    btnDownloadPdf.addEventListener("click", downloadPdfDirect);
   }
   const btnPrintPdf = document.getElementById("btnPrintPdf");
   if (btnPrintPdf) {
-    btnPrintPdf.addEventListener("click", openPdfDownloadModal);
+    btnPrintPdf.addEventListener("click", downloadPdfDirect);
   }
 
   if (chkAutoDate) {
@@ -1092,221 +1091,150 @@ function renderTable6(dataRows, summaryRow) {
 }
 
 // =============================================================================
-// PDF GENERATION & EXPORT (DIRECT DOWNLOAD FOR MOBILE/DESKTOP & BROWSER PRINT)
+// PDF GENERATION & DIRECT DOWNLOAD (OPTIMIZED FOR MOBILE PHONE & DESKTOP)
 // =============================================================================
-function openPdfDownloadModal() {
-  if (chkAutoDate && chkAutoDate.checked && rawSheetData) {
-    applySheetDate(rawSheetData);
-  }
+async function downloadPdfDirect() {
+  const btnSavePdf = document.getElementById("btnSavePdf");
   
-  const modal = document.getElementById("modalPdfDownload");
-  const modalDate = document.getElementById("pdfModalDate");
-  const progressBox = document.getElementById("pdfProgressBox");
-  const btnDirect = document.getElementById("btnDirectDownloadPdf");
-  const btnPrint = document.getElementById("btnBrowserPrintPdf");
-
-  if (modalDate && coverDateDisplay) {
-    modalDate.innerText = coverDateDisplay.innerText.trim() || "Hari Ini";
-  }
-  if (progressBox) progressBox.classList.add("hidden");
-  if (btnDirect) btnDirect.disabled = false;
-  if (btnPrint) btnPrint.disabled = false;
-  if (modal) modal.classList.remove("hidden");
-  document.body.classList.add("modal-open");
-}
-
-function openSavePdfDialog() {
-  openPdfDownloadModal();
-}
-
-function closePdfModal() {
-  const modal = document.getElementById("modalPdfDownload");
-  if (modal) modal.classList.add("hidden");
-  document.body.classList.remove("modal-open");
-}
-
-function triggerBrowserPrint() {
-  closePdfModal();
-  setTimeout(() => {
-    window.print();
-  }, 200);
-}
-
-function preparePdfExportContainer() {
-  const container = document.createElement("div");
-  container.id = "pdfExportStaging";
-  container.className = "pdf-export-container";
-
-  for (let i = 1; i <= 8; i++) {
-    const originalSlide = document.getElementById("slide-" + i);
-    if (!originalSlide) continue;
-
-    const clonedSlide = originalSlide.cloneNode(true);
-    clonedSlide.removeAttribute("id");
-
-    // Hapus tombol zoom atau elemen khusus layar
-    const unwanted = clonedSlide.querySelectorAll(".btn-slide-zoom, .no-print");
-    unwanted.forEach((el) => el.remove());
-
-    // Berikan styling inline pasti 1440x810 agar tidak terpengaruh responsive scaling HP
-    clonedSlide.style.width = "1440px";
-    clonedSlide.style.height = "810px";
-    clonedSlide.style.minWidth = "1440px";
-    clonedSlide.style.minHeight = "810px";
-    clonedSlide.style.maxWidth = "1440px";
-    clonedSlide.style.maxHeight = "810px";
-    clonedSlide.style.transform = "none";
-    clonedSlide.style.margin = "0";
-    clonedSlide.style.boxSizing = "border-box";
-    clonedSlide.style.boxShadow = "none";
-    clonedSlide.style.borderRadius = "0";
-    clonedSlide.style.overflow = "hidden";
-    clonedSlide.style.display = "flex";
-    clonedSlide.style.flexDirection = "column";
-
-    if (i === 1) {
-      clonedSlide.style.backgroundImage = "url('assets/cover_template.png')";
-      clonedSlide.style.backgroundSize = "cover";
-      clonedSlide.style.backgroundPosition = "center";
-      clonedSlide.style.padding = "0";
-    } else if (i === 8) {
-      clonedSlide.style.backgroundImage = "url('assets/closing.png')";
-      clonedSlide.style.backgroundSize = "cover";
-      clonedSlide.style.backgroundPosition = "center";
-      clonedSlide.style.padding = "0";
-    } else {
-      clonedSlide.style.backgroundImage = "url('assets/table_bg.jpg')";
-      clonedSlide.style.backgroundSize = "cover";
-      clonedSlide.style.backgroundPosition = "center";
-      clonedSlide.style.padding = "38px 46px";
-    }
-
-    container.appendChild(clonedSlide);
-  }
-
-  return container;
-}
-
-async function generateAndDownloadPdf() {
   if (typeof html2pdf === "undefined") {
-    alert("Library pemroses PDF sedang dimuat. Mengalihkan ke menu cetak browser...");
-    triggerBrowserPrint();
+    alert("Library pemroses PDF sedang dimuat. Harap coba beberapa detik lagi.");
     return;
   }
 
-  const btnDirect = document.getElementById("btnDirectDownloadPdf");
-  const btnPrint = document.getElementById("btnBrowserPrintPdf");
-  const progressBox = document.getElementById("pdfProgressBox");
-  const progressBar = document.getElementById("pdfProgressBar");
-  const progressLabel = document.getElementById("pdfProgressLabel");
-  const progressPercent = document.getElementById("pdfProgressPercent");
+  // Visual button feedback & cegah double-click
+  let origText = "";
+  if (btnSavePdf) {
+    btnSavePdf.disabled = true;
+    origText = btnSavePdf.innerHTML;
+    btnSavePdf.innerHTML = `
+      <span class="btn-full-text">Sedang Menyusun Dokumen PDF...</span>
+      <span class="btn-mobile-text">Memproses...</span>
+    `;
+  }
 
-  const updateProgress = (pct, text) => {
-    if (progressBar) progressBar.style.width = pct + "%";
-    if (progressPercent) progressPercent.innerText = pct + "%";
-    if (progressLabel) progressLabel.innerText = text;
-  };
+  showLoader("Sedang menyusun file PDF resmi (8 Halaman Lanskap)...");
 
   try {
-    if (btnDirect) btnDirect.disabled = true;
-    if (btnPrint) btnPrint.disabled = true;
-    if (progressBox) progressBox.classList.remove("hidden");
-
-    updateProgress(15, "Menyiapkan lembar rekapitulasi data 1440x810...");
-
-    // Pastikan tanggal terbaru diaplikasikan
+    // 1. Pastikan tanggal cover tersinkronisasi
     if (chkAutoDate && chkAutoDate.checked && rawSheetData) {
       applySheetDate(rawSheetData);
     }
 
-    // Buat nama file resmi berdasarkan tanggal
+    const s1 = document.getElementById("slide-1");
+    if (!s1) throw new Error("Slide cover laporan tidak ditemukan.");
+
+    // 2. Inisialisasi dokumen jsPDF dari Slide 1
+    if (loadingText) loadingText.innerText = "Memproses halaman 1 dari 8 (Cover Laporan)...";
+    
+    const w1 = html2pdf().set({
+      margin: 0,
+      image: { type: "jpeg", quality: 0.92 },
+      html2canvas: { scale: 1, useCORS: true, logging: false },
+      jsPDF: { unit: "px", format: [1440, 810], orientation: "landscape", hotfixes: ["px_scaling"] }
+    }).from(s1);
+
+    const pdf = await w1.toPdf().get("pdf");
+
+    // Pastikan halaman awal tepat 1 halaman
+    while (pdf.internal.getNumberOfPages() > 1) {
+      pdf.deletePage(pdf.internal.getNumberOfPages());
+    }
+
+    // 3. Render dan tambahkan Slide 2 sampai 8 secara berurutan
+    for (let i = 2; i <= 8; i++) {
+      const slide = document.getElementById("slide-" + i);
+      if (!slide) continue;
+
+      if (loadingText) {
+        loadingText.innerText = `Memproses halaman ${i} dari 8...`;
+      }
+
+      const w = html2pdf().set({
+        margin: 0,
+        image: { type: "jpeg", quality: 0.92 },
+        html2canvas: { scale: 1, useCORS: true, logging: false }
+      }).from(slide);
+
+      await w.toCanvas();
+      const canvas = w.prop.canvas;
+      pdf.addPage([1440, 810], "landscape");
+      pdf.addImage(canvas, "JPEG", 0, 0, 1440, 810);
+    }
+
+    // 4. Siapkan nama file resmi berdasarkan tanggal
     let dateStr = "";
     if (coverDateDisplay && coverDateDisplay.innerText) {
       dateStr = coverDateDisplay.innerText.trim().replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_]/g, "");
     }
     const filename = `SILAPHAR_Rekap_WBP_${dateStr || "Terbaru"}.pdf`;
 
-    updateProgress(35, "Menyusun 8 halaman slide lanskap...");
-    const staging = preparePdfExportContainer();
-    document.body.appendChild(staging);
-
-    updateProgress(55, "Merender dokumen ke format PDF resolusi tinggi...");
-
-    const opt = {
-      margin: 0,
-      filename: filename,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: {
-        scale: 1, // Resolusi 1:1 HD 1440x810, tajam, zero pixel drift, aman di memori HP
-        useCORS: true,
-        scrollY: 0,
-        scrollX: 0,
-        logging: false,
-        windowWidth: 1440
-      },
-      jsPDF: {
-        unit: "px",
-        format: [1440, 810],
-        orientation: "landscape",
-        hotfixes: ["px_scaling"]
-      }
-    };
-
-    updateProgress(75, "Menyimpan file PDF ke perangkat Anda...");
-    await html2pdf().from(staging).set(opt).save();
-
-    // Bersihkan staging container dari DOM
-    if (staging && staging.parentNode) {
-      staging.parentNode.removeChild(staging);
+    if (loadingText) {
+      loadingText.innerText = "Mengunduh file PDF ke perangkat Anda...";
     }
 
-    updateProgress(100, "Berhasil! File PDF telah diunduh.");
+    // 5. Output Blob dokumen PDF
+    const blob = pdf.output("blob");
+    const blobUrl = URL.createObjectURL(blob);
+
+    // 6. Trigger unduhan langsung ke browser/HP
+    const downloadLink = document.createElement("a");
+    downloadLink.href = blobUrl;
+    downloadLink.download = filename;
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    setTimeout(() => {
+      if (downloadLink.parentNode) {
+        downloadLink.parentNode.removeChild(downloadLink);
+      }
+    }, 1000);
+
+    // 7. Notifikasi toast untuk smartphone jika download manager HP menahan unduhan otomatis
+    showDownloadToast(blobUrl, filename);
 
     setTimeout(() => {
-      if (progressBox) progressBox.classList.add("hidden");
-      if (btnDirect) btnDirect.disabled = false;
-      if (btnPrint) btnPrint.disabled = false;
-      closePdfModal();
-    }, 1200);
+      hideLoader();
+      if (btnSavePdf) {
+        btnSavePdf.disabled = false;
+        if (origText) btnSavePdf.innerHTML = origText;
+      }
+    }, 800);
 
   } catch (err) {
     console.error("Gagal membuat PDF langsung:", err);
-    updateProgress(100, "Gagal membuat PDF otomatis. Mengalihkan ke menu cetak...");
-    
-    const staging = document.getElementById("pdfExportStaging");
-    if (staging && staging.parentNode) staging.parentNode.removeChild(staging);
-
-    setTimeout(() => {
-      if (progressBox) progressBox.classList.add("hidden");
-      if (btnDirect) btnDirect.disabled = false;
-      if (btnPrint) btnPrint.disabled = false;
-      closePdfModal();
-      window.print();
-    }, 1500);
+    hideLoader();
+    if (btnSavePdf) {
+      btnSavePdf.disabled = false;
+      if (origText) btnSavePdf.innerHTML = origText;
+    }
+    alert("Terjadi kendala saat menyusun dokumen. Membuka jendela cetak browser...");
+    window.print();
   }
 }
 
-function setupPdfModalListeners() {
-  const btnClosePdf = document.getElementById("btnClosePdfModal");
-  if (btnClosePdf) {
-    btnClosePdf.addEventListener("click", closePdfModal);
-  }
-  const btnCancelPdf = document.getElementById("btnCancelPdfModal");
-  if (btnCancelPdf) {
-    btnCancelPdf.addEventListener("click", closePdfModal);
-  }
-  const backdropPdf = document.getElementById("backdropPdfModal");
-  if (backdropPdf) {
-    backdropPdf.addEventListener("click", closePdfModal);
-  }
-  const btnDirectDownload = document.getElementById("btnDirectDownloadPdf");
-  if (btnDirectDownload) {
-    btnDirectDownload.addEventListener("click", generateAndDownloadPdf);
-  }
-  const btnBrowserPrint = document.getElementById("btnBrowserPrintPdf");
-  if (btnBrowserPrint) {
-    btnBrowserPrint.addEventListener("click", triggerBrowserPrint);
-  }
+function showDownloadToast(blobUrl, filename) {
+  const oldToast = document.querySelector(".pdf-download-toast");
+  if (oldToast) oldToast.remove();
+
+  const toast = document.createElement("div");
+  toast.className = "pdf-download-toast";
+  toast.innerHTML = `
+    <span>File PDF Berhasil Dibuat!</span>
+    <a href="${blobUrl}" download="${filename}">Buka / Unduh File</a>
+  `;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    if (toast && toast.parentNode) {
+      toast.style.transition = "opacity 0.4s ease";
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 400);
+    }
+  }, 7000);
+}
+
+function openSavePdfDialog() {
+  downloadPdfDirect();
 }
 
 function showLoader(msg) {

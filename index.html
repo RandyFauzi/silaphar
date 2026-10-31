@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261031_10">
+  <link rel="stylesheet" href="css/style.css?v=20261031_11">
 </head>
 <body>
 
@@ -535,98 +535,6 @@
     </div>
   </div>
 
-  <!-- Modal Download & Cetak Dokumen PDF (Direct Download & Browser Print) -->
-  <div id="modalPdfDownload" class="modal-modern hidden no-print" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle">
-    <div class="modal-modern-backdrop" id="backdropPdfModal"></div>
-    <div class="modal-modern-card modal-pdf-card">
-      
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <div class="modal-title-text">
-            <h3 id="pdfModalTitle">Download Rekapitulasi Laporan PDF</h3>
-            <p>Dokumen Resmi 16:9 Landscape (8 Halaman Lengkap)</p>
-          </div>
-        </div>
-        <button id="btnClosePdfModal" class="modal-close-btn" title="Tutup Modal">&times;</button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        
-        <!-- Summary Box -->
-        <div class="pdf-meta-box">
-          <div class="pdf-meta-item">
-            <span class="pdf-meta-label">Tanggal Laporan</span>
-            <span id="pdfModalDate" class="pdf-meta-val">SABTU, 31 OKTOBER 2026</span>
-          </div>
-          <div class="pdf-meta-item">
-            <span class="pdf-meta-label">Format Dokumen</span>
-            <span class="pdf-meta-val">8 Halaman Lanskap (1440 &times; 810 px)</span>
-          </div>
-          <div class="pdf-meta-item">
-            <span class="pdf-meta-label">Cakupan Isi</span>
-            <span class="pdf-meta-val">Cover, 6 Tabel Rekapitulasi UPT Kalsel, Lembar Penutup</span>
-          </div>
-        </div>
-
-        <!-- Download Option Cards -->
-        <div class="pdf-action-cards">
-          
-          <!-- Option 1: Direct Download (Recommended for Mobile & PC) -->
-          <div class="pdf-option-card highlighted">
-            <div class="pdf-option-header">
-              <span class="pdf-option-tag">DIREKOMENDASIKAN UNTUK HP &amp; KOMPUTER</span>
-              <h4 class="pdf-option-title">Download File PDF Langsung</h4>
-              <p class="pdf-option-desc">
-                Memproses dan mengunduh file <strong>.pdf</strong> 8 halaman langsung ke folder Download perangkat Anda tanpa perlu printer atau konfigurasi spooler.
-              </p>
-            </div>
-            <button id="btnDirectDownloadPdf" type="button" class="btn-pdf-action btn-pdf-primary">
-              Download File PDF (8 Halaman)
-            </button>
-          </div>
-
-          <!-- Option 2: Browser Print Preview -->
-          <div class="pdf-option-card">
-            <div class="pdf-option-header">
-              <span class="pdf-option-tag tag-secondary">PILIHAN CETAK BROWSER</span>
-              <h4 class="pdf-option-title">Buka Menu Cetak Browser</h4>
-              <p class="pdf-option-desc">
-                Buka menu dialog print bawaan browser untuk mencetak langsung ke printer fisik atau menyimpan dengan print driver sistem Anda.
-              </p>
-            </div>
-            <button id="btnBrowserPrintPdf" type="button" class="btn-pdf-action btn-pdf-secondary">
-              Buka Menu Cetak (Print Preview)
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Progress Box (Hidden until generating) -->
-        <div id="pdfProgressBox" class="pdf-progress-box hidden">
-          <div class="pdf-progress-header">
-            <span id="pdfProgressLabel" class="pdf-progress-label">Menyiapkan dokumen PDF...</span>
-            <span id="pdfProgressPercent" class="pdf-progress-percent">0%</span>
-          </div>
-          <div class="pdf-progress-track">
-            <div id="pdfProgressBar" class="pdf-progress-bar" style="width: 0%;"></div>
-          </div>
-          <p class="pdf-progress-hint">Harap tunggu beberapa saat. Seluruh 8 halaman sedang diproses.</p>
-        </div>
-
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="modal-footer">
-        <button id="btnCancelPdfModal" type="button" class="btn-footer-secondary">
-          Batal / Tutup
-        </button>
-      </div>
-
-    </div>
-  </div>
-
   <!-- Loading Overlay -->
   <div id="loadingModal" class="loading-modal hidden">
     <img src="assets/Logo Permasyarakatan.webp" alt="Logo Pemasyarakatan" style="height: 60px; width: auto; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));">
@@ -635,6 +543,6 @@
   </div>
 
   <script src="js/html2pdf.bundle.min.js"></script>
-  <script src="js/app.js?v=20261031_10"></script>
+  <script src="js/app.js?v=20261031_11"></script>
 </body>
 </html>
