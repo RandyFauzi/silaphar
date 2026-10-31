@@ -1143,26 +1143,6 @@ function setupMobileResponsiveScaler() {
     setTimeout(updateSlideScale, 150);
   });
 
-  // Mode Tampilan Toggle (Slide 16:9 vs Tabel Geser Lebar)
-  const btnModeSlide = document.getElementById("btnModeSlide");
-  const btnModeTable = document.getElementById("btnModeTable");
-  const slidesWrapper = document.getElementById("slidesWrapper");
-
-  if (btnModeSlide && btnModeTable && slidesWrapper) {
-    btnModeSlide.addEventListener("click", () => {
-      btnModeSlide.classList.add("active");
-      btnModeTable.classList.remove("active");
-      slidesWrapper.classList.remove("mode-table-active");
-      updateSlideScale();
-    });
-
-    btnModeTable.addEventListener("click", () => {
-      btnModeTable.classList.add("active");
-      btnModeSlide.classList.remove("active");
-      slidesWrapper.classList.add("mode-table-active");
-    });
-  }
-
   // Klik pada tombol "Perbesar"
   document.querySelectorAll(".btn-slide-zoom").forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -1178,8 +1158,7 @@ function setupMobileResponsiveScaler() {
   // Klik langsung pada viewport scaler di layar HP/tablet
   document.querySelectorAll(".slide-viewport-scaler").forEach((scaler) => {
     scaler.addEventListener("click", () => {
-      // Hanya aktif bila mode slide aktif dan ukuran layar HP/tablet <= 900px
-      if (window.innerWidth <= 900 && (!slidesWrapper || !slidesWrapper.classList.contains("mode-table-active"))) {
+      if (window.innerWidth <= 900) {
         const container = scaler.closest(".slide-card-container");
         if (container) {
           const index = container.getAttribute("data-slide-index");

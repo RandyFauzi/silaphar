@@ -414,7 +414,6 @@ body {
   height: var(--slide-height);
 }
 
-.view-mode-bar,
 .btn-slide-zoom {
   display: none;
 }
@@ -1529,50 +1528,6 @@ html, body {
     box-sizing: border-box !important;
   }
 
-  /* Bilah Pengaturan Mode Tampilan Mobile */
-  .view-mode-bar {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 6px 10px !important;
-    margin-bottom: 12px !important;
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .view-mode-label {
-    font-size: 0.68rem !important;
-    font-weight: 700 !important;
-    color: #475569 !important;
-  }
-
-  .view-mode-pills {
-    display: flex !important;
-    gap: 4px !important;
-  }
-
-  .mode-pill {
-    padding: 4px 8px !important;
-    font-size: 0.66rem !important;
-    font-weight: 600 !important;
-    border-radius: 5px !important;
-    border: 1px solid #cbd5e1 !important;
-    background: #f8fafc !important;
-    color: #475569 !important;
-    cursor: pointer !important;
-    transition: all 0.15s ease !important;
-  }
-
-  .mode-pill.active {
-    background: #0f172a !important;
-    color: #ffffff !important;
-    border-color: #0f172a !important;
-  }
-
   .slides-wrapper {
     width: 100% !important;
     max-width: 100% !important;
@@ -1676,25 +1631,6 @@ html, body {
     top: 618px !important;
     font-size: 32px !important;
     line-height: 1 !important;
-  }
-
-  /* Optional Mode: Tabel Geser Lebar (Jika diaktifkan oleh pengguna) */
-  .slides-wrapper.mode-table-active .slide-card-container.table-card .slide-viewport-scaler {
-    aspect-ratio: auto !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    border: 1px solid #e2e8f0 !important;
-    cursor: default !important;
-  }
-
-  .slides-wrapper.mode-table-active .slide-card-container.table-card .slide-page {
-    position: relative !important;
-    transform: none !important;
-    width: 1440px !important;
-    min-width: 1440px !important;
-    height: auto !important;
-    min-height: 720px !important;
-    padding: 24px 30px !important;
   }
 
   /* 6. Modal Dialog Mobile */
@@ -1935,7 +1871,6 @@ body.modal-open {
   .control-strip,
   .slide-nav-bar,
   .slide-badge-title,
-  .view-mode-bar,
   .btn-slide-zoom,
   .slide-zoom-modal,
   .loading-modal,
