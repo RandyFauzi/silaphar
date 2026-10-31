@@ -146,11 +146,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupEventListeners();
   setupSpreadsheetModalListeners();
   
+  // Pasang tanggal hari ini secara default di input & cover
+  const todayStr = getIndonesianDate(new Date());
+  setReportDate(todayStr);
+
   // Inisialisasi Database
   await initDatabase();
   
-  // Muat data spreadsheet aktif (dari cache terlebih dahulu jika ada)
-  loadActiveSpreadsheetData();
+  // Muat data spreadsheet aktif (dari cache lokal lalu otomatis update real-time dari Google Sheets)
+  await loadActiveSpreadsheetData();
+
+  // Aktifkan sinkronisasi otomatis latar belakang setiap 60 detik (real-time updates)
+  startRealtimeAutoRefresh();
 });
 
 async function initDatabase() {
@@ -236,9 +243,12 @@ function setupEventListeners() {
 
   if (btnSetToday) {
     btnSetToday.addEventListener("click", () => {
-      if (chkAutoDate) chkAutoDate.checked = false;
+      if (chkAutoDate) chkAutoDate.checked = true;
+      selectedSheet = "";
+      if (selectSheet) selectSheet.value = "";
       const todayStr = getIndonesianDate(new Date());
       setReportDate(todayStr);
+      fetchDataFromAppsScript(true, "", true, false);
     });
   }
 
@@ -552,31 +562,38 @@ async function renderDbTable() {
 // DATA LOADING & CACHE RESOLUTION
 // =============================================================================
 async function loadActiveSpreadsheetData() {
-  // Cek apakah data snapshot sudah ada di database lokal
+  // Cek apakah data snapshot sudah ada di database lokal untuk rendering instan (0ms)
   const record = await dbService.getSpreadsheet(currentSpreadsheetId);
   const recordName = record ? record.name : "Spreadsheet Aktif";
 
+  let hasCached = false;
   if (record && record.cached_data && record.cached_data.rows && !selectedSheet) {
-    // 0ms LOAD DARI DATABASE LOKAL!
     applyLoadedData(record.cached_data, recordName, record.last_synced);
-    statusBadge.className = "status-dot-pill";
-    statusBadge.innerHTML = `<span class="dot"></span> Database Aktif`;
+    hasCached = true;
+    statusBadge.className = "status-dot-pill loading";
+    statusBadge.innerHTML = `<span class="dot"></span> Memperbarui data real-time...`;
     if (syncCacheBadge) {
       const syncTimeStr = record.last_synced ? (record.last_synced.includes(' ') ? record.last_synced.split(' ')[1] : record.last_synced) : 'Lokal';
       syncCacheBadge.innerText = `Database (${syncTimeStr})`;
     }
-    return;
   }
 
-  // Jika belum ada di cache atau sedang memilih tab sheet tertentu, fetch dari Apps Script
-  fetchDataFromAppsScript(false, selectedSheet, true);
+  // SELALU fetch data live terbaru secara real-time dari Google Spreadsheet!
+  // Jika sudah ada cache, fetch di latar belakang (isSilent = true) agar tidak memunculkan popup loading
+  await fetchDataFromAppsScript(false, selectedSheet, true, hasCached);
 }
 
 /**
  * Fetch data dari Google Apps Script API & Simpan ke Cache Database
+ * @param {boolean} isManualRefresh - Apakah dipicu oleh tombol refresh / paksa t=Date.now()
+ * @param {string} sheetParam - Nama tab sheet tertentu jika dipilih
+ * @param {boolean} updateDatabaseCache - Simpan snapshot ke SQLite/LocalStorage
+ * @param {boolean} isSilent - Jika true, tidak memunculkan modal overlay spinner
  */
-async function fetchDataFromAppsScript(isManualRefresh = false, sheetParam = "", updateDatabaseCache = false) {
-  showLoader("Mengambil data dari Google Spreadsheet...");
+async function fetchDataFromAppsScript(isManualRefresh = false, sheetParam = "", updateDatabaseCache = false, isSilent = false) {
+  if (!isSilent) {
+    showLoader("Mengambil data real-time dari Google Spreadsheet...");
+  }
   statusBadge.className = "status-dot-pill loading";
   statusBadge.innerHTML = `<span class="dot"></span> Menyinkronkan...`;
 
@@ -589,9 +606,9 @@ async function fetchDataFromAppsScript(isManualRefresh = false, sheetParam = "",
     if (sheetParam) {
       params.push(`sheet=${encodeURIComponent(sheetParam)}`);
     }
-    if (isManualRefresh) {
-      params.push(`t=${Date.now()}`);
-    }
+    // Selalu sertakan t agar cache browser / proxy selalu terlewati dan data 100% real-time
+    params.push(`t=${Date.now()}`);
+
     if (params.length > 0) {
       url += (url.includes("?") ? "&" : "?") + params.join("&");
     }
@@ -636,12 +653,33 @@ async function fetchDataFromAppsScript(isManualRefresh = false, sheetParam = "",
     statusBadge.innerHTML = `<span class="dot"></span> Terhubung (${sheetLabel})`;
   } catch (err) {
     console.error("Gagal mengambil data:", err);
-    statusBadge.className = "status-dot-pill error";
-    statusBadge.innerHTML = `<span class="dot"></span> Terputus`;
-    alert(`Gagal mengambil data dari Google Apps Script: ${err.message}\nPastikan dokumen dapat diakses.`);
+    if (!isSilent) {
+      statusBadge.className = "status-dot-pill error";
+      statusBadge.innerHTML = `<span class="dot"></span> Terputus`;
+      alert(`Gagal mengambil data dari Google Apps Script: ${err.message}\nPastikan dokumen dapat diakses.`);
+    }
   } finally {
-    hideLoader();
+    if (!isSilent) {
+      hideLoader();
+    }
   }
+}
+
+// =============================================================================
+// REAL-TIME AUTO-UPDATE (Background Polling setiap 60 detik)
+// =============================================================================
+let autoRefreshTimer = null;
+
+function startRealtimeAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  
+  // Refresh otomatis setiap 60 detik (1 menit)
+  autoRefreshTimer = setInterval(async () => {
+    // Hanya auto-sync jika pengguna sedang di mode otomatis (tidak sedang memilih tab sheet masa lalu secara manual)
+    if (!selectedSheet) {
+      await fetchDataFromAppsScript(false, "", true, true);
+    }
+  }, 60000);
 }
 
 /**
