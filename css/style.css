@@ -89,8 +89,6 @@ body {
   margin-top: 2px;
 }
 
-.brand-mobile-text,
-.brand-mobile-sub,
 .btn-mobile-text,
 .swipe-hint-pill {
   display: none;
@@ -1282,27 +1280,8 @@ html, body {
    -------------------------------------------------------------------------- */
 @media screen and (max-width: 768px) {
   /* 1. Typography & Responsive Visibility */
-  .brand-full-text,
-  .brand-full-sub,
   .btn-full-text {
     display: none !important;
-  }
-
-  .brand-mobile-text {
-    display: inline-block !important;
-    font-size: 0.88rem !important;
-    font-weight: 800 !important;
-    color: #ffffff !important;
-    letter-spacing: 0.4px !important;
-  }
-
-  .brand-mobile-sub {
-    display: block !important;
-    font-size: 0.64rem !important;
-    color: #94a3b8 !important;
-    font-weight: 500 !important;
-    line-height: 1.1 !important;
-    margin-top: 1px !important;
   }
 
   .btn-mobile-text {
@@ -1321,16 +1300,15 @@ html, body {
     margin-left: auto !important;
   }
 
-  /* 2. Top App Bar - Ultra Compact 48px Height */
+  /* 2. Top App Bar - Mobile Best Practice (Foto 2 Official Identity + Clean Action Bar) */
   .app-header {
-    height: 48px !important;
-    min-height: 48px !important;
-    padding: 0 10px !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 9px 12px 10px 12px !important;
     display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 6px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
     background: #0f172a !important;
     box-sizing: border-box !important;
     border-bottom: 2px solid var(--accent-gold) !important;
@@ -1339,50 +1317,69 @@ html, body {
   .brand-wrapper {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 10px !important;
+    width: 100% !important;
     min-width: 0 !important;
-    flex: 1 1 auto !important;
   }
 
   .app-logo {
-    height: 28px !important;
+    height: 38px !important;
     width: auto !important;
     flex-shrink: 0 !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) !important;
   }
 
   .brand-text {
     min-width: 0 !important;
-    overflow: hidden !important;
+    flex: 1 1 auto !important;
   }
 
   .brand-text h1 {
+    font-size: 0.84rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.3px !important;
+    color: #ffffff !important;
+    line-height: 1.2 !important;
     margin: 0 !important;
-    line-height: 1.15 !important;
+    text-transform: uppercase !important;
+  }
+
+  .brand-text p {
+    font-size: 0.60rem !important;
+    color: #94a3b8 !important;
+    font-weight: 500 !important;
+    line-height: 1.25 !important;
+    margin-top: 2px !important;
+    letter-spacing: 0.2px !important;
+    text-transform: uppercase !important;
   }
 
   .header-actions {
     display: flex !important;
     align-items: center !important;
-    gap: 5px !important;
-    flex-shrink: 0 !important;
+    gap: 6px !important;
+    width: 100% !important;
   }
 
   .header-actions .btn {
-    padding: 5px 8px !important;
-    font-size: 0.72rem !important;
+    flex: 1 1 0 !important;
+    padding: 7px 6px !important;
+    font-size: 0.74rem !important;
     font-weight: 600 !important;
-    border-radius: 5px !important;
-    height: 29px !important;
+    border-radius: 6px !important;
+    height: 32px !important;
     box-sizing: border-box !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    text-align: center !important;
     white-space: nowrap !important;
   }
 
   .header-actions .btn-primary {
-    padding: 5px 10px !important;
+    padding: 7px 8px !important;
     font-weight: 700 !important;
+    background: #059669 !important;
   }
 
   /* 3. Control Strip - Compact 2-Row Layout */
