@@ -1126,9 +1126,12 @@ function setupMobileResponsiveScaler() {
       const width = scaler.clientWidth;
       if (width > 0 && width < 1400) {
         const scale = width / 1440;
+        const height = width * 9 / 16;
         document.documentElement.style.setProperty("--slide-scale", scale.toString());
+        document.documentElement.style.setProperty("--slide-height-mobile", `${Math.round(height)}px`);
       } else {
         document.documentElement.style.setProperty("--slide-scale", "1");
+        document.documentElement.style.setProperty("--slide-height-mobile", "810px");
       }
     }
   }

@@ -1240,44 +1240,41 @@ html, body {
     gap: 24px;
   }
 
-  /* Slide 1 & 8 Full Scaling */
-  .slide-card-container.cover-card {
+  /* All Slides 1-8 Full Proportional 16:9 Scaling on Tablet */
+  .slide-card-container {
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0;
   }
 
-  .slide-card-container.cover-card .slide-page {
+  .slide-viewport-scaler {
     width: 100% !important;
     max-width: 100% !important;
-    height: auto !important;
+    height: var(--slide-height-mobile, auto) !important;
+    min-height: unset !important;
+    max-height: unset !important;
     aspect-ratio: 16 / 9 !important;
-    background-size: 100% 100% !important;
-    background-position: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    background: transparent !important;
   }
 
-  .slide-card-container.cover-card .cover-date-text {
+  .slide-viewport-scaler .slide-page {
     position: absolute !important;
-    left: 8.5% !important;
-    top: 76.3% !important;
-    font-size: clamp(14px, 2.2vw, 24px) !important;
-  }
-
-  /* Slides 2-7 Horizontal Scroll */
-  .slide-card-container.table-card {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    background: #ffffff;
-    box-sizing: border-box;
-  }
-
-  .slide-card-container.table-card .slide-page {
-    width: 1440px;
-    height: auto;
-    min-height: 750px;
+    top: 0 !important;
+    left: 0 !important;
+    width: 1440px !important;
+    height: 810px !important;
+    min-width: 1440px !important;
+    min-height: 810px !important;
+    transform-origin: 0 0 !important;
+    transform: scale(var(--slide-scale, 0.5)) !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 }
 
@@ -1592,7 +1589,7 @@ html, body {
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 0 !important;
   }
 
   .slide-badge-title {
@@ -1643,12 +1640,15 @@ html, body {
   .slide-viewport-scaler {
     width: 100% !important;
     max-width: 100% !important;
+    height: var(--slide-height-mobile, auto) !important;
+    min-height: unset !important;
+    max-height: unset !important;
     aspect-ratio: 16 / 9 !important;
     position: relative !important;
     overflow: hidden !important;
     border-radius: 8px !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
-    background: #ffffff !important;
+    background: transparent !important;
     cursor: pointer !important;
     -webkit-tap-highlight-color: transparent !important;
   }
